@@ -9,13 +9,13 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
-"class": "NoiseRNG",
+"base": "TileMap",
+"class": "MapLayout",
 "language": "GDScript",
-"path": "res://Noise/NoiseRNG.gd"
+"path": "res://MapSupport/MapLayout.gd"
 } ]
 _global_script_class_icons={
-"NoiseRNG": ""
+"MapLayout": ""
 }
 
 [application]
