@@ -2,7 +2,8 @@ class_name Player
 extends Node2D
 
 # signals
-signal check_direction(from, _direction)
+signal check_direction(from, direction)
+signal finished_moving(at)
 
 # enums
 
@@ -56,3 +57,4 @@ func _on_Main_cannot_move()->void:
 
 func _on_Tween_tween_all_completed()->void:
 	active = true
+	emit_signal("finished_moving", position)

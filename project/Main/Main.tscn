@@ -13,3 +13,4 @@ script = ExtResource( 3 )
 [connection signal="can_move" from="." to="Player" method="_on_Main_can_move"]
 [connection signal="cannot_move" from="." to="Player" method="_on_Main_cannot_move"]
 [connection signal="check_direction" from="Player" to="." method="_on_Player_check_direction"]
+[connection signal="finished_moving" from="Player" to="." method="_on_Player_finished_moving"]

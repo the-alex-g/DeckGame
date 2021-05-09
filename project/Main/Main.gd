@@ -24,3 +24,7 @@ func _on_Player_check_direction(from:Vector2, direction:Vector2)->void:
 		emit_signal("can_move")
 	else:
 		emit_signal("cannot_move")
+
+
+func _on_Player_finished_moving(at:Vector2)->void:
+	_map.check_interactions(at)
