@@ -40,7 +40,7 @@ func _on_Player_finished_moving(at:Vector2)->void:
 
 func _on_Map_new_player_position(new_position:Vector2)->void:
 	_player.phase_in()
-	_player.set_deferred('position', new_position)
+	_player.position = new_position#set_deferred('position', new_position)
 	var particle_position := Vector2.ZERO
 	particle_position.y = new_position.y - spawn_particle_height
 	particle_position.x = new_position.x

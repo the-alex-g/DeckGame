@@ -48,11 +48,6 @@ func _process(delta:float)->void:
 			_alpha = 1
 			_fade_value = 0
 			_fading = false
-		update()
-
-
-func _draw():
-	draw_circle(Vector2.ZERO, 10, Color(0,0,0,_alpha))
 
 
 func _on_Tween_tween_all_completed()->void:
