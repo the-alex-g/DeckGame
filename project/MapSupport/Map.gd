@@ -2,6 +2,7 @@ class_name MapHandler
 extends Node2D
 
 # signals
+signal new_player_position(new_position)
 
 # enums
 
@@ -9,6 +10,7 @@ extends Node2D
 const MAP_LAYOUT_PATH := 'res://MapSupport/MapLayout.tscn'
 const IMPASSABLE_TILE_INDEXES := [-1,1,]
 const GATE_TILE_INDEX := 0
+const EMPTY_TILES := [0]
 
 # exported variables
 
@@ -18,10 +20,6 @@ var _ignore
 # onready variables
 onready var _base_tiles := $BaseTiles
 onready var _interactable_tiles := $InteractableTiles
-
-
-func _ready():
-	generate_card(0)
 
 
 func generate_card(card_number:int)->void:
@@ -39,7 +37,22 @@ func generate_card(card_number:int)->void:
 	for tile_position in interactable_tiles:
 		var tile_index:int = interactable_tiles[tile_position]
 		_interactable_tiles.set_cellv(tile_position, tile_index)
+	_get_new_player_position()
 
+
+func _get_new_player_position()->void:
+	var used_tiles:Array = _base_tiles.get_used_cells()
+	var valid_tiles:PoolVector2Array = []
+	for tile_position in used_tiles:
+		var tile_index:int = _base_tiles.get_cellv(tile_position)
+		if EMPTY_TILES.has(tile_index):
+			valid_tiles.append(tile_position)
+	var final_position_index := randi()%valid_tiles.size()
+	var final_position_at_map_coords := valid_tiles[final_position_index]
+	var final_position_at_world_coords:Vector2 = _base_tiles.map_to_world(final_position_at_map_coords)
+	final_position_at_world_coords.x += 16
+	final_position_at_world_coords.y += 11
+	emit_signal("new_player_position", final_position_at_world_coords)
 
 func check_can_move(from:Vector2, direction:Vector2)->bool:
 	var from_in_map:Vector2 = _base_tiles.world_to_map(from)

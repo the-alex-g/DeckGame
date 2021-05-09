@@ -44,17 +44,17 @@ func _draw():
 	draw_circle(Vector2.ZERO, 10, Color.black)
 
 
-func _on_Main_can_move()->void:
+func _on_Tween_tween_all_completed()->void:
+	active = true
+	emit_signal("finished_moving", position)
+
+
+func _on_Card_can_move():
 	var new_position := cell_size*_direction
 	new_position += position
 	_tween.interpolate_property(self, 'position', null, new_position, move_time)
 	_tween.start()
 
 
-func _on_Main_cannot_move()->void:
+func _on_Card_cannot_move():
 	active = true
-
-
-func _on_Tween_tween_all_completed()->void:
-	active = true
-	emit_signal("finished_moving", position)
