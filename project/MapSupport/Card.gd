@@ -9,6 +9,7 @@ signal cannot_move
 # constants
 
 # exported variables
+export var spawn_particle_height := 20
 
 # variables
 var _ignore
@@ -16,6 +17,7 @@ var _ignore
 # onready variables
 onready var _map := $Map
 onready var _player := $Player
+onready var _spawn_particles := $PlayerSpawnParticles
 
 
 func _ready():
@@ -37,4 +39,10 @@ func _on_Player_finished_moving(at:Vector2)->void:
 
 
 func _on_Map_new_player_position(new_position:Vector2)->void:
+	_player.phase_in()
 	_player.set_deferred('position', new_position)
+	var particle_position := Vector2.ZERO
+	particle_position.y = new_position.y - spawn_particle_height
+	particle_position.x = new_position.x
+	_spawn_particles.position = particle_position
+	_spawn_particles.emitting = true

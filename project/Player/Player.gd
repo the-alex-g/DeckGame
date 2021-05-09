@@ -17,15 +17,18 @@ var _ignore
 var active := true
 var _direction := Vector2.ZERO
 var cell_size := Vector2(32,22)
+var _alpha := 1.0
+var _fading := false
+var _fade_value := 0.0
 
 # onready variables
 onready var _tween := $Tween
 
 
-func _process(_delta:float)->void:
-	if not active:
+func _process(delta:float)->void:
+	if not active and not _fading:
 		return
-	else:
+	if active:
 		_direction = Vector2.ZERO
 		if Input.is_action_just_pressed("left"):
 			_direction.x -= 1
@@ -38,10 +41,18 @@ func _process(_delta:float)->void:
 		if _direction != Vector2.ZERO:
 			active = false
 			emit_signal('check_direction', position, _direction)
+	if _fading:
+		_fade_value += delta
+		_alpha = lerp(0, 1, _fade_value)
+		if _fade_value >= 1:
+			_alpha = 1
+			_fade_value = 0
+			_fading = false
+		update()
 
 
 func _draw():
-	draw_circle(Vector2.ZERO, 10, Color.black)
+	draw_circle(Vector2.ZERO, 10, Color(0,0,0,_alpha))
 
 
 func _on_Tween_tween_all_completed()->void:
@@ -58,3 +69,7 @@ func _on_Card_can_move():
 
 func _on_Card_cannot_move():
 	active = true
+
+
+func phase_in()->void:
+	_fading = true
