@@ -17,15 +17,15 @@ var _ignore
 var active := true
 var _direction := Vector2.ZERO
 var cell_size := Vector2(32,22)
-var _alpha := 1.0
 var _fading := false
-var _fade_value := 0.0
 
 # onready variables
-onready var _tween := $Tween
+onready var _move_tween := $MoveTween
+onready var _fade_tween := $FadeTween
+onready var _sprite := $Sprite
 
 
-func _process(delta:float)->void:
+func _process(_delta:float)->void:
 	if not active and not _fading:
 		return
 	if active:
@@ -41,13 +41,10 @@ func _process(delta:float)->void:
 		if _direction != Vector2.ZERO:
 			active = false
 			emit_signal('check_direction', position, _direction)
-	if _fading:
-		_fade_value += delta
-		_alpha = lerp(0, 1, _fade_value)
-		if _fade_value >= 1:
-			_alpha = 1
-			_fade_value = 0
-			_fading = false
+		if _direction.x > 0:
+			_sprite.flip_h = false
+		elif _direction.x < 0:
+			_sprite.flip_h = true
 
 
 func _on_Tween_tween_all_completed()->void:
@@ -58,8 +55,8 @@ func _on_Tween_tween_all_completed()->void:
 func _on_Card_can_move():
 	var new_position := cell_size*_direction
 	new_position += position
-	_tween.interpolate_property(self, 'position', null, new_position, move_time)
-	_tween.start()
+	_move_tween.interpolate_property(self, 'position', null, new_position, move_time)
+	_move_tween.start()
 
 
 func _on_Card_cannot_move():
@@ -67,4 +64,5 @@ func _on_Card_cannot_move():
 
 
 func phase_in()->void:
-	_fading = true
+	_fade_tween.interpolate_property(self, 'modulate',Color(1,1,1,0), Color(1,1,1,1), 1.0)
+	_fade_tween.start()

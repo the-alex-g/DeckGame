@@ -8,18 +8,39 @@ signal new_player_position(new_position)
 
 # constants
 const MAP_LAYOUT_PATH := 'res://MapSupport/MapLayout.tscn'
-const IMPASSABLE_TILE_INDEXES := [-1,1,]
+const IMPASSABLE_TILE_INDEXES := [-1,1,6,7]
 const GATE_TILE_INDEX := 0
-const EMPTY_TILES := [0]
+const EMPTY_TILES := [0,3,4,5]
+const MAP_EMPTY := 0
+const MAP_FULL := 1
+const A := {'empty':[3,4,5], 'solid':[6,7]}
+const B := {'empty':[0], 'solid':[1]}
+const C := {'empty':[0], 'solid':[1]}
+const D := {'empty':[0], 'solid':[1]}
+const E := {'empty':[0], 'solid':[1]}
+const F := {'empty':[0], 'solid':[1]}
+const G := {'empty':[0], 'solid':[1]}
+const H := {'empty':[0], 'solid':[1]}
+const I := {'empty':[0], 'solid':[1]}
 
 # exported variables
 
 # variables
 var _ignore
+var _layout_and_tiles := {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
+var _tile_set_list := ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 
 # onready variables
 onready var _base_tiles := $BaseTiles
 onready var _interactable_tiles := $InteractableTiles
+
+
+func _ready()->void:
+	for layout in 9:
+		layout += 1
+		for tiles in layout:
+			var tiles_as_string:String = _tile_set_list[tiles]
+			_layout_and_tiles[layout].append(tiles_as_string)
 
 
 func generate_card(card_number:int)->void:
@@ -37,6 +58,25 @@ func generate_card(card_number:int)->void:
 	for tile_position in interactable_tiles:
 		var tile_index:int = interactable_tiles[tile_position]
 		_interactable_tiles.set_cellv(tile_position, tile_index)
+	# get the specific tiles to use for the card
+	var tile_set_finder:Array = _layout_and_tiles[card_number+1]
+	var tile_set_index := randi()%tile_set_finder.size()
+	var tile_set_name:String = tile_set_finder[tile_set_index]
+	_layout_and_tiles[card_number+1].erase(tile_set_name)
+	var tile_set:Dictionary = get(tile_set_name)
+	var empty_tiles:Array = tile_set['empty']
+	var full_tiles:Array = tile_set['solid']
+	# replace the 'blank' tiles with the new ones
+	for tile_position in _base_tiles.get_used_cells():
+		var tile_index:int = _base_tiles.get_cellv(tile_position)
+		if tile_index == MAP_EMPTY:
+			var replacement_tile_index := randi()%empty_tiles.size()
+			var replacement_tile:int = empty_tiles[replacement_tile_index]
+			_base_tiles.set_cellv(tile_position, replacement_tile)
+		elif tile_index == MAP_FULL:
+			var replacement_tile_index := randi()%full_tiles.size()
+			var replacement_tile:int = full_tiles[replacement_tile_index]
+			_base_tiles.set_cellv(tile_position, replacement_tile)
 	_get_new_player_position()
 
 
