@@ -8,13 +8,13 @@ signal new_player_position(new_position)
 
 # constants
 const MAP_LAYOUT_PATH := 'res://MapSupport/MapLayout.tscn'
-const IMPASSABLE_TILE_INDEXES := [-1,1,6,7]
+const IMPASSABLE_TILE_INDEXES := [-1,1,6,7,8,12]
 const GATE_TILE_INDEX := 0
-const EMPTY_TILES := [0,3,4,5]
+const EMPTY_TILES := [0,3,4,5,9]
 const MAP_EMPTY := 0
 const MAP_FULL := 1
 const A := {'empty':[3,4,5], 'solid':[6,7]}
-const B := {'empty':[0], 'solid':[1]}
+const B := {'empty':[9,10.11], 'solid':[8,12]}
 const C := {'empty':[0], 'solid':[1]}
 const D := {'empty':[0], 'solid':[1]}
 const E := {'empty':[0], 'solid':[1]}
@@ -59,7 +59,12 @@ func generate_card(card_number:int)->void:
 		var tile_index:int = interactable_tiles[tile_position]
 		_interactable_tiles.set_cellv(tile_position, tile_index)
 	# get the specific tiles to use for the card
-	var tile_set_finder:Array = _layout_and_tiles[card_number+1]
+	var searching := true
+	var tile_set_finder:Array
+	while searching:
+		tile_set_finder = _layout_and_tiles[card_number+1]
+		if tile_set_finder.size() > 0:
+			searching = false
 	var tile_set_index := randi()%tile_set_finder.size()
 	var tile_set_name:String = tile_set_finder[tile_set_index]
 	_layout_and_tiles[card_number+1].erase(tile_set_name)
